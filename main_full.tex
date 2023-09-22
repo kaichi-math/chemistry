@@ -1,0 +1,191 @@
+\documentclass[b5paper,dvipdfmx,13pt]{jsarticle}
+
+\usepackage{graphicx}
+\usepackage[margin=20truemm]{geometry}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{wrapfig}
+\usetikzlibrary{intersections, calc, arrows.meta}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{textcomp,mathcomp,otf}
+\usepackage{ascmac}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{mhchem,chemfig}
+
+\theoremstyle{plain}
+\newtheorem{exa}{Example}[section]
+\newtheorem{exe}{Exercise}[section]
+\theoremstyle{definition}
+\newtheorem{dfn}{Definition}
+\theoremstyle{remark}
+\def\theenumii{\arabic{enumii}}
+\def\図予定{\relax}
+
+\newcommand{\includefigright}{r}
+\newcommand{\includefigleft}{l}
+\let\sideincludefig\includefigright
+\newcommand{\includefig}[2]{
+  \setbox1=\hbox{\includegraphics[scale=0.3]{#2}}
+  \leavevmode\mbox{}
+  \ifodd\value{page}\let\sideincludefig\includefigright\else\let\sideincludefig\includefigleft\fi
+  \begin{wrapfigure}{\sideincludefig}[30pt]{\wd1}
+    \box1
+    \vskip-1.5\baselineskip
+  \end{wrapfigure}}
+\newdimen\wrapfigwidth
+\def\choicelonger#1#2{%
+  \ifdim#1>#2\relax#1\else#2\fi}
+
+
+\newcounter{remark}
+\renewcommand{\theremark}{\arabic{chapter}.\arabic{remark}}
+\newenvironment{remark}[1]
+  {\setbox1\hbox{Re}
+   \stepcounter{remark}
+   \begin{list}{\textbf{Remark\,\theremark.}}
+   {\leftmargin\wd1\labelwidth\wd1\advance\labelwidth-\labelsep}\label{#1}
+   \item}
+  {\end{list}}
+\newenvironment{note}[1]
+  {\begin{remark}{#1}\label{#1}\small}
+  {\end{remark}}
+\newcounter{example}
+\renewcommand{\theexample}{\arabic{chapter}-\arabic{example}}
+\newenvironment{example}[1]
+  {\stepcounter{example}
+   \begin{itembox}[l]{\textbf{【 Example\,\theexample.\,】}}\label{#1}}
+  {\end{itembox}}
+\newenvironment{example*}[1]
+  {\begin{itembox}[l]{\textbf{【 Example.\,】}}}
+  {\end{itembox}}
+\newcounter{exercise}
+\renewcommand{\theexercise}{\arabic{chapter}-\arabic{exercise}}
+\newenvironment{exercise}[1]
+  {\stepcounter{exercise}
+   \begin{list}{\hskip-0.6zw\textbf{【 Exercise\,\theexercise.\,】}}
+   {\leftmargin1zw%
+   \rightmargin0pt%
+   \setbox1\hbox{\hskip-0.6zw\textbf{【 Exercise\,\theexercise.\,】}}
+   \labelwidth\wd1%
+   \labelsep1zw%
+   \itemindent\wd1\advance\itemindent\labelsep\advance\itemindent-\leftmargin}\label{#1}
+   \item}
+  {\end{list}}
+\newcount\subproblemnum
+\subproblemnum0
+\newenvironment{subproblem}
+  {\subproblemnum0
+  \begin{list}{\global\advance\subproblemnum1\relax\ajKakko{\the\subproblemnum}}
+  {\leftmargin0.4zw%
+  \itemindent1.3zw%
+  \labelwidth1zw%
+  \labelsep1zw}}
+  {\end{list}}
+\newenvironment{subproblems}{}{}
+\newenvironment{approach}[1]
+  {\begin{list}{\fbox{\textsf{Approach}}}
+   {\leftmargin0zw\labelwidth-1zw\labelsep1zw\rightmargin0zw\itemindent0pt}\label{#1}
+   \item}
+  {\end{list}}
+
+\makeatletter
+
+\advance\topmargin-1cm
+\advance\textheight1.5cm
+\advance\oddsidemargin-1in
+\advance\oddsidemargin2cm
+\advance\textwidth1.5cm
+\def\thepage{{\ttfamily\the\c@page}}
+
+\newdimen\widertextwidth
+\widertextwidth\textwidth
+\advance\widertextwidth0.5cm
+\newcount\anscounta
+\newcount\anscountb
+\newcount\probnum
+
+\def\testtitle#1#2{
+  \newpage\noindent\hskip-0.5cm
+  \underline{%
+  \ttfamily
+  \hbox to0.33\widertextwidth{\large #1\hfil}%
+  \hbox to0.10\widertextwidth{\hfil#2\hfil}%
+  \hbox to0.57\widertextwidth{\qquad{年}\qquad{組}\qquad{番}\qquad{氏名}\hfil}}
+  \vskip5pt
+  \probnum0}
+
+\makeatletter
+\def\tthbox#1{
+  \setbox1\hbox{h}
+  \setbox2\hbox{y}
+  \hbox{\vrule width\z@ height\ht1 depth\dp2 #1}}
+\DeclareRobustCommand\underline[1]{%
+  \relax
+  \ifmmode\@@underline{#1}%
+  \else $\@@underline{\tthbox{#1}}\m@th$\relax\fi}
+\DeclareRobustCommand\Underline[1]{%
+  \setbox1\hbox{.}
+  \underline{#1}\hskip-\wd1\spacefactor=3000\ }
+\DeclareRobustCommand\UnderlineComma[1]{%
+  \setbox1\hbox{.}
+  \underline{#1}\hskip-\wd1\spacefactor=1250\ }
+
+\newif\ifanswermode
+\answermodefalse
+\newdimen\ansblankwidth
+\ansblankwidth4cm\relax
+\DeclareRobustCommand\answerblank[2]{%
+  [\hbox to\ansblankwidth{\ifanswermode{\hfil#2\hfil}\else\phantom{#1}\fi}]}
+
+\def\prob{%
+  \advance\probnum1
+  \vskip5pt
+  \noindent\hskip-0.5cm\hbox to0.7cm{\the\probnum)}}
+\def\anslistfour#1#2#3#4#5{%
+  \vskip5pt
+  \noindent
+  \hbox to0.48\textwidth{%
+  \hbox to0.24\textwidth{\ajMaru{1}\quad#1}%
+  \hbox to0.24\textwidth{\ajMaru{2}\quad#2}}%
+  \hbox to0.48\textwidth{%
+  \hbox to0.24\textwidth{\ajMaru{3}\quad#3}%
+  \hbox to0.24\textwidth{\ajMaru{4}\quad#4}}%
+  \hbox to0.08\textwidth{[\hfill\phantom{#5}\hfill]}}
+\def\anslisttwo#1#2#3#4#5{%
+  \vskip5pt
+  \noindent
+  \hbox to0.48\textwidth{\ajMaru{1}\quad#1}%
+  \hbox to0.48\textwidth{\ajMaru{2}\quad#2}%
+  \hbox to0.08\textwidth{[\hfill\phantom{#5}\hfill]}%
+  \vskip0pt
+  \noindent
+  \hbox to0.48\textwidth{\ajMaru{3}\quad#3}%
+  \hbox to0.48\textwidth{\ajMaru{4}\quad#4}%
+  \hbox to0.08\textwidth{\hfill}}
+\def\anslistone#1#2#3#4#5{%
+  \vskip5pt
+  \noindent
+  \hbox to0.96\textwidth{\ajMaru{1}\quad#1}%
+  \hbox to0.08\textwidth{[\hfill\phantom{#5}\hfill]}%
+  \vskip0pt
+  \noindent
+  \hbox to0.96\textwidth{\ajMaru{2}\quad#2}%
+  \vskip0pt
+  \noindent
+  \hbox to0.96\textwidth{\ajMaru{3}\quad#3}%
+  \hbox to0.96\textwidth{\ajMaru{4}\quad#4}%
+  \hbox to0.08\textwidth{\hfill}}
+
+\makeatother
+  
+\begin{document}
+
+%\answermodetrue
+
+%\ttfamily
+
+\input{section01-01}
+
+\end{document}
